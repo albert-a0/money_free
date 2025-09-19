@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:money_free/widgets/expenses_list/expenses_list.dart';
+import 'package:money_free/widgets/expenses_list/new_expense.dart';
 
 import '../../model/expense.dart';
 
@@ -36,35 +37,7 @@ class _ExpensesState extends State<Expenses> {
         actions: [
           IconButton(onPressed: (){
             showModalBottomSheet(context: context, builder:(ctx) {
-              return Container(
-                height: 400,
-
-                child: Padding(
-                  padding: EdgeInsetsGeometry.all(10),
-                  child:Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      TextField(
-                        decoration: InputDecoration(
-                          label: Text("Title"),
-                          enabledBorder: UnderlineInputBorder()
-                        ),
-                        maxLength: 10,
-                        onChanged: (value) {
-
-                        },
-                      ),
-                      Row(
-                        children: [
-                          ElevatedButton(onPressed: () {
-
-                          }, child: Text("Submit"))
-                        ],
-                      )
-                    ],
-                  )
-                ),
-              );
+              return NewExpense();
             });
           }, icon: Icon(Icons.add))
         ],
