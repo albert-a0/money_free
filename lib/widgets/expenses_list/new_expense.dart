@@ -1,7 +1,13 @@
+import 'dart:ffi';
+
+import 'package:flutter/foundation.dart' hide Category;
 import 'package:flutter/material.dart';
+import 'package:money_free/model/expense.dart';
 
 class NewExpense  extends StatefulWidget{
-  NewExpense({super.key});
+  NewExpense(this.addExpense,{super.key});
+
+  void Function(Expense expense) addExpense;
 
   @override
   State<NewExpense> createState() {
@@ -11,6 +17,18 @@ class NewExpense  extends StatefulWidget{
 }
 
 class _NewExpenseState extends State<NewExpense>{
+  var SELECTEDCATEGORY=Category.FOOD;
+  final TextEditingController myTitleCont = TextEditingController();
+  final TextEditingController myAmountCont = TextEditingController();
+
+  @override
+  void dispose() {
+    myTitleCont.dispose();
+    myAmountCont.dispose();
+    super.dispose();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -27,9 +45,7 @@ class _NewExpenseState extends State<NewExpense>{
                     enabledBorder: UnderlineInputBorder()
                 ),
                 maxLength: 30,
-                onChanged: (value) {
-
-                },
+                controller: myTitleCont,
               ),
               TextField(
                 decoration: InputDecoration(
@@ -37,30 +53,25 @@ class _NewExpenseState extends State<NewExpense>{
                     enabledBorder: UnderlineInputBorder()
                 ),
                 maxLength: 10,
-                onChanged: (value) {
-
-                },
+                controller: myAmountCont,
                 keyboardType: TextInputType.number,
               ),
-              TextField(
-                decoration: InputDecoration(
-                    label: Text("Date"),
-                    enabledBorder: UnderlineInputBorder()
-                ),
+              DropdownButton<Category>(
+                  items: Category.values.map((e) => DropdownMenuItem(value: e,child: Text(e.name))).toList(),
+                  value: SELECTEDCATEGORY,
+                  onChanged:(vvv) {
 
-                keyboardType: TextInputType.datetime,
-              ),
+                    setState(() {
+                      SELECTEDCATEGORY = vvv!;
+                    });
+              }),
               Row(
                 children: [
                   ElevatedButton(onPressed: () {
-                    showDatePicker(context: context,
-                        firstDate: DateTime.now(),
-                        lastDate: DateTime.now().add( Duration(days: 365)),
-                        initialDate: DateTime.now(),
-                    ).then((value) {
-                      print(value);
-                    });
-                  }, child: Text("Select Date")),
+                    widget.addExpense(Expense(myTitleCont.text,double.parse(myAmountCont.text), DateTime.now(), SELECTEDCATEGORY));
+                    Navigator.pop(context);
+                  }, child: Text("SAVE")),
+                  Spacer(),
                   ElevatedButton(onPressed: () {
                     Navigator.pop(context);
                   }, child: Text("CANCEL"))
